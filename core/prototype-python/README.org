@@ -1,0 +1,35 @@
+* Task
+  I want to detect and localize a white flat rectangular object.(eg document, recip, piece of paper,
+  qr code). Ideally it should be efiicient enough so that it allow to perform real time detection on
+  the smartphone.
+
+* Steps
+** TODO Localize object
+   I think this could be done using just edge detection, but probably it won't be enough rebust to
+   randoms.
+
+*** First approach   
+1. Convert to gray scale
+
+3. Applay Gaussian Blur
+   Reduces noises(eg textures) so edge detection should perform better.
+
+5. Applay morphological transform to recognize white on white
+
+
+   
+** TODO Extract the white space
+   The main problem will be guess which rectangular object is the actual wanted one. Later a
+   perspetive transform will give nice extraction.
+
+** TODO Extract the sth on paper ??
+   What is:
+   + morphological operation
+   + thresholding
+
+   
+
+
+  
+
+

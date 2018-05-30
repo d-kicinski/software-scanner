@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="slowly.dying">
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.front.autofocus"
+        android:required="false"/>
+
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="false"/>
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:orientation="horizontal"
+        >
+
+        <activity
+            android:name="dying.slowly.MainActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppFullScreenTheme"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.hardware.camera2.CameraDevice" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.camera2.CameraManager" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.camera2.CameraCharacteristics" />
+            </intent-filter>
+
+        </activity>
+        <activity android:name="dying.slowly.DisplayIntend" />
+
+    </application>
+
+    <supports-screens   android:resizeable="true"
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:anyDensity="true" />
+
+</manifest>

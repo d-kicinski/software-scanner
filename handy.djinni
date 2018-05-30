@@ -1,0 +1,10 @@
+# @extern "handy.yaml"
+
+
+CoreLibInterface = interface +c {
+    static cvtGray(image_ptr: i64);
+    static draw_contour(input_ptr: i64);
+    static software_scanner(input_ptr: i64, output_ptr: i64);
+    static hello(name: string): string;
+    static find_document(input_ptr: i64): optional<list<list<i64>>>;
+}
