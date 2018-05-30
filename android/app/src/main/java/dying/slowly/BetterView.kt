@@ -58,7 +58,7 @@ class BetterView(context: Context, attrs: AttributeSet) : JavaCameraView(context
             }
         }
 
-        //param.setPreviewSize(bestSize.width, bestSize.height);
+        //param.setPreviewSize(sizeList[11]);
         param.setPictureSize(bestSize!!.width, bestSize.height)
         mCamera.parameters = param
     }

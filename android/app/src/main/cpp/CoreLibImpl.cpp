@@ -22,14 +22,16 @@ void CoreLibInterface::draw_contour(int64_t input_ptr) {
 
     auto white_cnts { corelib::detect_white_objects(*input_image) };
     if (auto rect = corelib::find_rect(white_cnts)) {
-        std::vector<std::vector<cv::Point>> contour;    // fuk with this
-        contour.push_back(*rect);                       // and this also
-        // Why it doesn't work?
+        if (cv::contourArea(*rect) > 0.10*(input_image->rows * input_image->cols))
+        {
+            std::vector<std::vector<cv::Point>> contour;    // fuk with this
+            contour.push_back(*rect);                       // and this also
+            // Why it doesn't work?
 //        auto val {rect.value()};
 //        cv::drawContours(image, std::vector{val}, 0, {0, 255, 0}, 3);
 
-        cv::drawContours(*input_image, contour, 0, {0, 255, 0}, 3);
-
+            cv::drawContours(*input_image, contour, 0, {0, 255, 0}, 3);
+        }
     }
 }
 

@@ -5,7 +5,6 @@ import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
-import android.widget.Button
 import org.opencv.core.Mat
 import slowly.dying.R
 
@@ -17,13 +16,11 @@ import android.content.Intent
 import android.net.Uri
 import java.io.File
 import android.graphics.Bitmap
-import android.widget.ImageView
 import org.opencv.core.Core
 import org.opencv.imgproc.Imgproc
 import android.graphics.Point
 import android.os.Handler
-import android.widget.Switch
-import android.widget.TextView
+import android.widget.*
 import dying.slowly.generated.CoreLibInterface
 import org.opencv.core.CvType
 import org.opencv.core.Size
@@ -67,11 +64,11 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
             displayImage()
         }
 
-
-        //mOpenCvCameraView!!.setMaxFrameSize(720, 480)
+        mOpenCvCameraView!!.setMaxFrameSize(1000, 1000)
         mOpenCvCameraView!!.visibility = SurfaceView.VISIBLE
         mOpenCvCameraView!!.setCvCameraViewListener(this)
         mOpenCvCameraView!!.enableView()
+        //mOpenCvCameraView!!.resolution = Resolution()
         //this@OpenCVCameraView.activity.setRequestedOrientation(ActivityInfo
         //        .SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -100,9 +97,12 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     private fun onPictureTaken() {
         //val imageToDisplay = currentFrame.clone()
-        mOpenCvCameraView!!.setBestResolution()
+        //mOpenCvCameraView!!.setBestResolution()
         //var res = mOpenCvCameraView!!.getResolutionList()
-
+        //mOpenCvCameraView!!.setBestResolution()
+        //var res = mOpenCvCameraView!!.resolutionList
+        mOpenCvCameraView!!.setMaxFrameSize(10000, 10000)
+        mOpenCvCameraView!!.setBestResolution()
         val sdf = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
         val currentDateAndTime = sdf.format(Date())
 
@@ -144,6 +144,8 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     override fun onResume() {
         super.onResume()
         mCurrentFrame = Mat()
+        mOpenCvCameraView!!.setMaxFrameSize(1000, 1000)
+
     }
 
     override fun onDestroy() {
@@ -153,6 +155,8 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     override fun onCameraViewStarted(width: Int, height: Int) {
         mCurrentFrame = Mat(height, width, CvType.CV_8UC4)
+        mOpenCvCameraView!!.setMaxFrameSize(1000, 1000)
+
     }
 
     override fun onCameraViewStopped() {
@@ -179,6 +183,7 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         if (requestCode == VALIDATE_SCAN_REQUEST) {
+
             if (resultCode == Activity.RESULT_OK) {
                 val isScanAccepted = data.extras.getBoolean("isScanAccepted")
 
@@ -258,6 +263,9 @@ class DisplayIntend : Activity() {
             mScannedBitMap.compress(Bitmap.CompressFormat.PNG, 100, fos);
 
             fos.close()
+            Toast.makeText(scan_view!!.context, fileName + " saved", Toast
+                .LENGTH_SHORT)
+                .show()
             Log.d(TAG, "should save")
             Log.d(TAG, "SAVE AT: " + fileName)
         } catch (e: java.io.IOException) {

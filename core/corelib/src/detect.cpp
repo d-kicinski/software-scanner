@@ -118,8 +118,8 @@ std::vector<std::vector<cv::Point>> detect_white_objects(cv::Mat const & img, bo
 
   cv::split(img_hls, hls_channels);
   auto mask = hls_channels[1];
-  //cv::GaussianBlur(l, l, cv::Size(7, 7), 1.5, 1.5);  // not sure about that
-  cv::threshold(mask, mask, 135, 255, cv::THRESH_BINARY);
+  cv::GaussianBlur(mask, mask, cv::Size(7, 7), 1.5, 1.5);  // not sure about that
+  cv::threshold(mask, mask, 150, 255, cv::THRESH_BINARY);
 
 
   // Looking for largest countour
@@ -145,7 +145,10 @@ contours)
   // Approximate contour with only four points
   std::vector<cv::Point> scan_contour;
   std::vector<cv::Point> approx;
-
+    // i wish i had std::span or gls::span ;_;
+//  auto cnts(contours);
+//  if (cnts.size() > 4) {
+//    cnts.resize(4);
     // TODO warunki na przyblizony wielkat : patrz notatki na telefonie
   for (auto c = contours.begin(); c != contours.end(); ++c)
   {
