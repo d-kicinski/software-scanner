@@ -1,9 +1,10 @@
-# 🆂🅾🅵🆃🆆🅰🆁🅴 🆂🅲🅰🅽🅽🅴🆁
+<p align="center"> <font size="20"> 🆂🅾🅵🆃🆆🅰🆁🅴 🆂🅲🅰🅽🅽🅴🆁 </font> </p>
 
-<img src="https://github.com/dawidkski/software-scanner/res/cropped_optim.gif" width="40" height="40" />
+<p align="center">
+<img src="https://github.com/dawidkski/software-scanner/blob/master/res/cropped_optim.gif" width="350" height="600" />
+</p>
 
-![alt text](https://github.com/dawidkski/software-scanner/res/cropped_optim.gif)
+### About:
 
 
-
-## How to build :hammer:
+### How to build :hammer:
