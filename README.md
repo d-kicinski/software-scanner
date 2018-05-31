@@ -5,7 +5,7 @@
 </p>
 
 ### About:
-Android aplication make taking photos of documents/papers/recipes more easier. Point camera at your object of interest, click red button and wait for magic to happend. Enable hints to tell you in real time if implemented algorithm can see your document.
+Android aplication make taking photos of documents/papers/recipes more easier. Point camera at your object of interest, click red button and wait for magic to happend. Hints (green contours) tells you in real time if implemented algorithm can see your document.
 <p align="center">
 <img src="https://github.com/dawidkski/software-scanner/blob/master/res/img2.png" width="640" height="360"/>
 </p>
