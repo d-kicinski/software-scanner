@@ -12,4 +12,4 @@ deps/djinni/src/run-assume-built \
     --cpp-namespace generated \
     --ident-cpp-enum-type foo_bar \
     \
-    --idl handy.djinni
+    --idl native_api.djinni

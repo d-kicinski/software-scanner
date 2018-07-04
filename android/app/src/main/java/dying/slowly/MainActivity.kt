@@ -28,7 +28,6 @@ import org.opencv.imgcodecs.Imgcodecs
 import java.io.FileOutputStream
 import org.opencv.core.Point as cvPoint
 
-import java.io.IOException
 
 class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     private val TAG = "MainActivity"
@@ -38,13 +37,12 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     private var mCurrentFrame: Mat? = null
 
     private lateinit var mFileName: String
-    // private lateinit var currentFrame: Mat
+
     val VALIDATE_SCAN_REQUEST = 1
     val FRAME_PROCESS_PERIOD = 5 // in milis
     private var m100milisCounter: Int = 0
 
     companion object {
-        // init block executes before first object is created
         init {
             System.loadLibrary("software_scanner")
             System.loadLibrary("opencv_java3") // comment this when using OpenCV Manager
@@ -55,8 +53,6 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams
-        //        .FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_main)
         mOpenCvCameraView = findViewById(R.id.HelloVisionView)
@@ -68,9 +64,7 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         mOpenCvCameraView!!.visibility = SurfaceView.VISIBLE
         mOpenCvCameraView!!.setCvCameraViewListener(this)
         mOpenCvCameraView!!.enableView()
-        //mOpenCvCameraView!!.resolution = Resolution()
-        //this@OpenCVCameraView.activity.setRequestedOrientation(ActivityInfo
-        //        .SCREEN_ORIENTATION_LANDSCAPE);
+
 
         val button = findViewById<Button>(R.id.main_button) as Button
         button.setOnClickListener {
@@ -81,14 +75,12 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         mSwitch = findViewById<Switch>(R.id.switch1)
         mSwitch.rotation = (-90).toFloat()
 
-
-
         val handler = Handler()
         val delay = 100 //milliseconds
         handler.postDelayed(object : Runnable {
             override fun run() {
                 m100milisCounter++
-                Log.d(TAG,"100minil past, now:" + m100milisCounter.toString())
+                Log.d(TAG, "100minil past, now:" + m100milisCounter.toString())
                 handler.postDelayed(this, delay.toLong())
             }
         }, delay.toLong())
@@ -96,21 +88,11 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
 
     private fun onPictureTaken() {
-        //val imageToDisplay = currentFrame.clone()
-        //mOpenCvCameraView!!.setBestResolution()
-        //var res = mOpenCvCameraView!!.getResolutionList()
-        //mOpenCvCameraView!!.setBestResolution()
-        //var res = mOpenCvCameraView!!.resolutionList
+
         mOpenCvCameraView!!.setMaxFrameSize(10000, 10000)
         mOpenCvCameraView!!.setBestResolution()
         val sdf = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss")
         val currentDateAndTime = sdf.format(Date())
-
-/*        mFileName = Environment.getExternalStoragePublicDirectory(Environment
-                .DIRECTORY_PICTURES).path + "/sample_picture_" + currentDateAndTime + ".jpg"*/
-
-/*        mFileName = Environment.getExternalStorageDirectory().path + "/sample_picture_" +
-        currentDateAndTime + ".jpg"*/
 
         val photo = File(Environment.getExternalStorageDirectory(), "photo.jpg")
         if (photo.exists()) {
@@ -118,11 +100,6 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
         }
         mFileName = photo.path
         mOpenCvCameraView!!.takePicture(photo.path)
-        //galleryAddPic()
-
-/*        Toast.makeText(mOpenCvCameraView!!.context, mFileName + " saved", Toast
-                .LENGTH_SHORT)
-                .show()*/
     }
 
     private fun displayImage() {
@@ -165,18 +142,14 @@ class MainActivity : Activity(), CameraBridgeViewBase.CvCameraViewListener2 {
 
 
     override fun onCameraFrame(frame: CameraBridgeViewBase.CvCameraViewFrame): Mat? {
-        //mCurrentFrame.release()
         mCurrentFrame = frame.rgba()
-        //CoreLibInterface.cvtGray(mCurrentFrame!!.nativeObjAddr)
         if (mSwitch.isChecked) {
-            if (m100milisCounter >= FRAME_PROCESS_PERIOD)
-            {
+            if (m100milisCounter >= FRAME_PROCESS_PERIOD) {
                 if (!mCurrentFrame!!.empty()) {
                     CoreLibInterface.drawContour(mCurrentFrame!!.nativeObjAddr)
                 }
             }
         }
-
 
         return mCurrentFrame
     }
@@ -264,8 +237,8 @@ class DisplayIntend : Activity() {
 
             fos.close()
             Toast.makeText(scan_view!!.context, fileName + " saved", Toast
-                .LENGTH_SHORT)
-                .show()
+                    .LENGTH_SHORT)
+                    .show()
             Log.d(TAG, "should save")
             Log.d(TAG, "SAVE AT: " + fileName)
         } catch (e: java.io.IOException) {
@@ -289,7 +262,7 @@ class DisplayIntend : Activity() {
         scan_view.setImageBitmap(mScannedBitMap)
     }
 
-    private fun loadImage(path: String) : Mat {
+    private fun loadImage(path: String): Mat {
         originalImage = Imgcodecs.imread(path)
         val rgbImage = Mat()
 
@@ -297,7 +270,7 @@ class DisplayIntend : Activity() {
         return rgbImage
     }
 
-    private fun  scaleImage(rgbImage: Mat){
+    private fun scaleImage(rgbImage: Mat) {
         val display = windowManager.defaultDisplay
         //This is "android graphics Point" class
         val size = Point()
@@ -322,7 +295,6 @@ class DisplayIntend : Activity() {
         scannedImage = Mat()
         CoreLibInterface.softwareScanner(sampledImage.nativeObjAddr, scannedImage.nativeObjAddr)
         return scannedImage
-
     }
 
     private fun calculateSubSampleSize(srcImage: Mat, reqWidth: Int, reqHeight: Int): Double {
@@ -332,12 +304,10 @@ class DisplayIntend : Activity() {
         var inSampleSize = 1.0
 
         if (height > reqHeight || width > reqWidth) {
-
             // Calculate ratios of requested height and width to the raw
             //height and width
             val heightRatio = reqHeight.toDouble() / height.toDouble()
             val widthRatio = reqWidth.toDouble() / width.toDouble()
-
             // Choose the smallest ratio as inSampleSize value, this will
             //guarantee final image with both dimensions larger than or
             //equal to the requested height and width.

@@ -13,11 +13,12 @@ import android.hardware.Camera.Size
 import android.os.Environment
 import android.util.AttributeSet
 import android.util.Log
+
 //     android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
 
 class BetterView(context: Context, attrs: AttributeSet) : JavaCameraView(context, attrs), PictureCallback {
     private var mPictureFileName: String? = null
-    public lateinit var onPictureTakenCallback : () -> Unit
+    public lateinit var onPictureTakenCallback: () -> Unit
 
     val effectList: List<String>
         get() = mCamera.parameters.supportedColorEffects

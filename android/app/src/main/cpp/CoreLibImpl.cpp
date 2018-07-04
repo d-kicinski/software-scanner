@@ -7,23 +7,22 @@
 using namespace generated;
 
 void CoreLibInterface::cvtGray(int64_t image_ptr) {
-    cv::Mat * image = (cv::Mat*) image_ptr;
+    cv::Mat *image = (cv::Mat *) image_ptr;
     cv::cvtColor(*image, *image, cv::COLOR_RGBA2GRAY);
 }
 
 void CoreLibInterface::draw_contour(int64_t input_ptr) {
-  //cv::Mat & image = *(cv::Mat*) image_ptr;
-  cv::Mat * input_image = (cv::Mat*) input_ptr;
+    //cv::Mat & image = *(cv::Mat*) image_ptr;
+    cv::Mat *input_image = (cv::Mat *) input_ptr;
     if (input_image->empty()) return;
-  //cv::Mat * output_image = (cv::Mat*) output_ptr;
+    //cv::Mat * output_image = (cv::Mat*) output_ptr;
 
-  //cv::resize(image, image, cv::Size(400, 400));
-  //auto contour {corelib::get_main_contour(image)};
+    //cv::resize(image, image, cv::Size(400, 400));
+    //auto contour {corelib::get_main_contour(image)};
 
-    auto white_cnts { corelib::detect_white_objects(*input_image) };
+    auto white_cnts{corelib::detect_white_objects(*input_image)};
     if (auto rect = corelib::find_rect(white_cnts)) {
-        if (cv::contourArea(*rect) > 0.10*(input_image->rows * input_image->cols))
-        {
+        if (cv::contourArea(*rect) > 0.10 * (input_image->rows * input_image->cols)) {
             std::vector<std::vector<cv::Point>> contour;    // fuk with this
             contour.push_back(*rect);                       // and this also
             // Why it doesn't work?
@@ -38,35 +37,32 @@ void CoreLibInterface::draw_contour(int64_t input_ptr) {
 
 std::optional<std::vector<std::vector<int64_t>>> CoreLibInterface::find_document(int64_t
                                                                                  input_ptr) {
-  cv::Mat * input_image = (cv::Mat*) input_ptr;
+    cv::Mat *input_image = (cv::Mat *) input_ptr;
 
-  auto img(input_image);
-  double ratio = (double)(img->size().width) / 500.0;
-  cv::resize(*img, *img, {500, (int)(img->size().height / ratio)});
+    auto img(input_image);
+    double ratio = (double) (img->size().width) / 500.0;
+    cv::resize(*img, *img, {500, (int) (img->size().height / ratio)});
 
-  auto white_cnts { corelib::detect_white_objects(*img) };
-  auto rect { corelib::find_rect(white_cnts) };
-  if (auto rect = corelib::find_rect(white_cnts)) {
-      std::for_each(rect->begin(), rect->end(), [&ratio](auto &p) { p *= ratio; });
+    auto white_cnts{corelib::detect_white_objects(*img)};
+    auto rect{corelib::find_rect(white_cnts)};
+    if (auto rect = corelib::find_rect(white_cnts)) {
+        std::for_each(rect->begin(), rect->end(), [&ratio](auto &p) { p *= ratio; });
 
-      std::vector<std::vector<int64_t >> output;
-      for (auto &p: *rect) {
-          std::vector<int64_t> point {p.x, p.y};
-          output.push_back(point);
-      }
-      return std::make_optional(output);
-  }
-  else {
-    return std::nullopt;
-  }
+        std::vector<std::vector<int64_t >> output;
+        for (auto &p: *rect) {
+            std::vector<int64_t> point{p.x, p.y};
+            output.push_back(point);
+        }
+        return std::make_optional(output);
+    } else {
+        return std::nullopt;
+    }
 }
 
 
-
-void CoreLibInterface::software_scanner(int64_t input_ptr, int64_t output_ptr)
-{
-    cv::Mat * input_image = (cv::Mat*) input_ptr;
-    cv::Mat * output_image = (cv::Mat*) output_ptr;
+void CoreLibInterface::software_scanner(int64_t input_ptr, int64_t output_ptr) {
+    cv::Mat *input_image = (cv::Mat *) input_ptr;
+    cv::Mat *output_image = (cv::Mat *) output_ptr;
 
     if (auto scan = corelib::soft_scanner(*input_image)) {
         *output_image = *scan;
@@ -76,6 +72,6 @@ void CoreLibInterface::software_scanner(int64_t input_ptr, int64_t output_ptr)
 }
 
 
-std::string CoreLibInterface::hello(const std::string & name) {
-  return std::string {"Hello " + name};
+std::string CoreLibInterface::hello(const std::string &name) {
+    return std::string {"Hello " + name};
 }

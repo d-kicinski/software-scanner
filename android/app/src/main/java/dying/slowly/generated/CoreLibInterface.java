@@ -6,39 +6,39 @@ package dying.slowly.generated;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** @extern "handy.yaml" */
+/**
+ * @extern "handy.yaml"
+ */
 public abstract class CoreLibInterface {
-    public static native void cvtGray(long imagePtr);
+  public static native void cvtGray(long imagePtr);
 
-    public static native void drawContour(long inputPtr);
+  public static native void drawContour(long inputPtr);
 
-    public static native void softwareScanner(long inputPtr, long outputPtr);
+  public static native void softwareScanner(long inputPtr, long outputPtr);
 
-    public static native String hello(String name);
+  public static native String hello(String name);
 
-    public static native ArrayList<ArrayList<Long>> findDocument(long inputPtr);
+  public static native ArrayList<ArrayList<Long>> findDocument(long inputPtr);
 
-    private static final class CppProxy extends CoreLibInterface
-    {
-        private final long nativeRef;
-        private final AtomicBoolean destroyed = new AtomicBoolean(false);
+  private static final class CppProxy extends CoreLibInterface {
+    private final long nativeRef;
+    private final AtomicBoolean destroyed = new AtomicBoolean(false);
 
-        private CppProxy(long nativeRef)
-        {
-            if (nativeRef == 0) throw new RuntimeException("nativeRef is zero");
-            this.nativeRef = nativeRef;
-        }
-
-        private native void nativeDestroy(long nativeRef);
-        public void destroy()
-        {
-            boolean destroyed = this.destroyed.getAndSet(true);
-            if (!destroyed) nativeDestroy(this.nativeRef);
-        }
-        protected void finalize() throws java.lang.Throwable
-        {
-            destroy();
-            super.finalize();
-        }
+    private CppProxy(long nativeRef) {
+      if (nativeRef == 0) throw new RuntimeException("nativeRef is zero");
+      this.nativeRef = nativeRef;
     }
+
+    private native void nativeDestroy(long nativeRef);
+
+    public void destroy() {
+      boolean destroyed = this.destroyed.getAndSet(true);
+      if (!destroyed) nativeDestroy(this.nativeRef);
+    }
+
+    protected void finalize() throws java.lang.Throwable {
+      destroy();
+      super.finalize();
+    }
+  }
 }
