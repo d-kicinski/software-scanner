@@ -14,7 +14,7 @@ std::string TEST_IMG = "/home/dave/code/main/handy/core/app/1.jpg";
 
 cv::Mat read_image(std::string const & img_path)
 {
-  cv::Mat image = cv::imread(img_path, CV_LOAD_IMAGE_COLOR);
+  cv::Mat image = cv::imread(img_path, cv::IMREAD_COLOR);
   if (!image.data){
     std::cout << "Could not open or find the image \n";
   }
@@ -27,7 +27,7 @@ int main()
   // auto image {read_image(TEST_IMG)};
 
   std::vector<int> v_point = {0, 1};
-  cv::Point point(v_point)
+  cv::Point point(0, 1);
 
   //auto contours = detect_white_objects(image);
 

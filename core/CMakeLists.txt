@@ -14,4 +14,4 @@ add_executable(out
   app/src/main.cpp
   )
 
-target_link_libraries(out corelib)
+target_link_libraries(out corelib ${OpenCV_LIBS})

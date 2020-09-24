@@ -6,7 +6,7 @@ namespace corelib
 
 void show_image(const std::string &file_name)
 {
-  cv::Mat image = cv::imread(file_name, CV_LOAD_IMAGE_COLOR);
+  cv::Mat image = cv::imread(file_name, cv::IMREAD_COLOR);
 
   if (!image.data){
     std::cout << "Could not open or find the image \n";
@@ -79,7 +79,7 @@ cv::Mat android2opencv(const std::vector<uint8_t> &image,
                                       int32_t rotation_degrees)
 {
   cv::Mat nv21(frame_height + frame_height / 2, frame_width, CV_8UC1, (uchar *) image.data());
-  cv::cvtColor(nv21, nv21, CV_YUV2RGB_NV21);
+  cv::cvtColor(nv21, nv21, cv::COLOR_YUV2RGB_NV21);
   rotate_image(nv21, rotation_degrees);
 
   return nv21;
@@ -88,7 +88,7 @@ cv::Mat android2opencv(const std::vector<uint8_t> &image,
 std::vector<uint8_t> opencv2android(const cv::Mat &image)
 {
   cv::Mat mat;
-  cv::cvtColor(image, mat, CV_RGB2YUV);
+  cv::cvtColor(image, mat, cv::COLOR_RGB2YUV);
 
   // no idea wtf is going on, just copying from stackoverflow
   std::vector<uchar> array;
