@@ -224,4 +224,41 @@ std::optional<cv::Mat> soft_scanner(cv::Mat const &org)
         return std::nullopt;
     }
 }
+
+void software_scanner(int64_t input_ptr, int64_t output_ptr)
+{
+    cv::Mat *input_image = (cv::Mat *)input_ptr;
+    cv::Mat *output_image = (cv::Mat *)output_ptr;
+
+    if (auto scan = corelib::soft_scanner(*input_image)) {
+        *output_image = *scan;
+    } else {
+        *output_image = *input_image;
+    }
+}
+
+void draw_contour(int64_t input_ptr)
+{
+    // cv::Mat & image = *(cv::Mat*) image_ptr;
+    cv::Mat *input_image = (cv::Mat *)input_ptr;
+    if (input_image->empty())
+        return;
+    // cv::Mat * output_image = (cv::Mat*) output_ptr;
+
+    // cv::resize(image, image, cv::Size(400, 400));
+    // auto contour {corelib::get_main_contour(image)};
+
+    auto white_cnts{corelib::detect_white_objects(*input_image)};
+    if (auto rect = corelib::find_rect(white_cnts)) {
+        if (cv::contourArea(*rect) > 0.10 * (input_image->rows * input_image->cols)) {
+            std::vector<std::vector<cv::Point>> contour; // fuk with this
+            contour.push_back(*rect);                    // and this also
+            // Why it doesn't work?
+            //        auto val {rect.value()};
+            //        cv::drawContours(image, std::vector{val}, 0, {0, 255, 0}, 3);
+
+            cv::drawContours(*input_image, contour, 0, {0, 255, 0}, 3);
+        }
+    }
+}
 } // namespace corelib

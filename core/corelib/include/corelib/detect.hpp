@@ -34,4 +34,8 @@ find_rect(std::vector<std::vector<cv::Point>> const &contours);
 
 std::optional<cv::Mat> soft_scanner(cv::Mat const &org);
 
+void draw_contour(int64_t input_ptr);
+
+void software_scanner(int64_t input_ptr, int64_t output_ptr);
+
 } // namespace corelib
