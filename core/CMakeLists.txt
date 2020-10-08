@@ -11,7 +11,7 @@ find_package(OpenCV REQUIRED)
 add_subdirectory(corelib)
 
 add_executable(out
-  app/src/main.cpp
-  )
+        app/src/main.cpp
+        )
 
 target_link_libraries(out scanner ${OpenCV_LIBS})
