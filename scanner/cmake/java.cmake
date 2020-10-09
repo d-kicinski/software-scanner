@@ -14,7 +14,11 @@ find_package(Java 1.8 COMPONENTS Development REQUIRED)
 find_package(JNI REQUIRED)
 
 # Create the native library
-#set_target_properties(jnijavanative PROPERTIES INSTALL_RPATH "$ORIGIN")
+add_library(jniscanner "")
+set_target_properties(jniscanner PROPERTIES
+        POSITION_INDEPENDENT_CODE ON)
+set_target_properties(jniscanner PROPERTIES INSTALL_RPATH "$ORIGIN")
+
 
 # Needed by java/CMakeLists.txt
 set(JAVA_PACKAGE org.dave.javanative)
@@ -26,4 +30,4 @@ set(JAVA_PROJECT javanative-java)
 
 # Swig wrap all libraries
 add_subdirectory(scanner/java)
-#target_link_libraries(jnijavanative PRIVATE jniscanner)
+target_link_libraries(jniscanner PRIVATE jniScanner)

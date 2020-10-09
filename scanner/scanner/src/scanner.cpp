@@ -225,7 +225,7 @@ std::optional<cv::Mat> soft_scanner(cv::Mat const &org)
     }
 }
 
-void software_scanner(int64_t input_ptr, int64_t output_ptr)
+void software_scanner(unsigned long int input_ptr, unsigned long int output_ptr)
 {
     cv::Mat *input_image = (cv::Mat *)input_ptr;
     cv::Mat *output_image = (cv::Mat *)output_ptr;
@@ -237,7 +237,7 @@ void software_scanner(int64_t input_ptr, int64_t output_ptr)
     }
 }
 
-void draw_contour(int64_t input_ptr)
+void draw_contour(unsigned long int input_ptr)
 {
     // cv::Mat & image = *(cv::Mat*) image_ptr;
     cv::Mat *input_image = (cv::Mat *)input_ptr;
