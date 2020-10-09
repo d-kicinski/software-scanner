@@ -4,7 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-namespace corelib {
+namespace scanner {
 void show_img(const std::string &file_name);
 
 void show_image(const std::vector<cv::Mat> &images);
@@ -20,4 +20,4 @@ std::vector<uint8_t> opencv2android(const cv::Mat &image);
 
 void rotate_image(cv::Mat &image, int32_t rotation_degrees);
 
-} // namespace corelib
+} // namespace scanner

@@ -1,8 +1,8 @@
-#include <corelib/detect.hpp>
-#include <corelib/img_utils.h>
+#include <scanner/scanner.hpp>
+#include <scanner/img_utils.h>
 
-namespace corelib {
-float median(cv::Mat Input, int nVals)
+namespace scanner {
+float median(cv::Mat Input, int nVals=256)
 {
     // refer to
     // https://stackoverflow.com/questions/30078756/super-fast-median-of-matrix-in-opencv-as-fast-as-matlab
@@ -34,7 +34,7 @@ float median(cv::Mat Input, int nVals)
     return medianVal;
 }
 
-void auto_canny(cv::Mat const &img, cv::Mat &out, float sigma)
+void auto_canny(cv::Mat const &img, cv::Mat &out, float sigma=0.33)
 {
     // compute the median
     float m = median(img);
@@ -73,7 +73,7 @@ cv::Mat four_point_transform(cv::Mat const &img, std::vector<cv::Point> points)
     std::vector<cv::Point2f> dstF(dst.begin(), dst.end());
 
     // compute the perspective transform and then applay it
-    std::cout << points.size() << dst.size() << std::endl;
+//    std::cout << points.size() << dst.size() << std::endl;
     cv::Mat m = cv::getPerspectiveTransform(pointsF, dstF);
 
     cv::Mat out;
@@ -103,7 +103,7 @@ void order_points(std::vector<cv::Point> const &pts, std::vector<cv::Point> &dst
     dst[3] = *bl_it;
 }
 
-std::vector<std::vector<cv::Point>> detect_white_objects(cv::Mat const &img, bool sort)
+std::vector<std::vector<cv::Point>> detect_white_objects(cv::Mat const &img, bool sort=true)
 {
     cv::Mat img_hls;
 
@@ -230,7 +230,7 @@ void software_scanner(int64_t input_ptr, int64_t output_ptr)
     cv::Mat *input_image = (cv::Mat *)input_ptr;
     cv::Mat *output_image = (cv::Mat *)output_ptr;
 
-    if (auto scan = corelib::soft_scanner(*input_image)) {
+    if (auto scan = scanner::soft_scanner(*input_image)) {
         *output_image = *scan;
     } else {
         *output_image = *input_image;
@@ -246,10 +246,10 @@ void draw_contour(int64_t input_ptr)
     // cv::Mat * output_image = (cv::Mat*) output_ptr;
 
     // cv::resize(image, image, cv::Size(400, 400));
-    // auto contour {corelib::get_main_contour(image)};
+    // auto contour {scanner::get_main_contour(image)};
 
-    auto white_cnts{corelib::detect_white_objects(*input_image)};
-    if (auto rect = corelib::find_rect(white_cnts)) {
+    auto white_cnts{scanner::detect_white_objects(*input_image)};
+    if (auto rect = scanner::find_rect(white_cnts)) {
         if (cv::contourArea(*rect) > 0.10 * (input_image->rows * input_image->cols)) {
             std::vector<std::vector<cv::Point>> contour; // fuk with this
             contour.push_back(*rect);                    // and this also
@@ -261,4 +261,4 @@ void draw_contour(int64_t input_ptr)
         }
     }
 }
-} // namespace corelib
+} // namespace scanner

@@ -3,8 +3,8 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include <iostream>
-#include <corelib/img_utils.h>
-#include <corelib/detect.hpp>
+#include <scanner/img_utils.h>
+#include <scanner/scanner.hpp>
 
 using namespace std;
 

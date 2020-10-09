@@ -1,7 +1,7 @@
-#include "corelib/img_utils.h"
+#include "scanner/img_utils.h"
 #include <iostream>
 
-namespace corelib {
+namespace scanner {
 
 void show_image(const std::string &file_name)
 {
@@ -101,4 +101,4 @@ void rotate_image(cv::Mat &image, int32_t rotation_degrees)
     }
 }
 
-} // namespace corelib
+} // namespace scanner

@@ -7,10 +7,15 @@ project(libscanner VERSION 1.0.0 LANGUAGES CXX)
 ## Creating library
 
 # Create target and set properties
-add_library(scanner
+add_library(scanner SHARED
         src/img_utils
-        src/detect
+        src/scanner
         )
+
+#add_library(jnijavanative SHARED "")
+# eh?
+set_target_properties(scanner PROPERTIES
+        POSITION_INDEPENDENT_CODE ON)
 
 #Add an alias so that library can be used inside the build tree, e.g. when testing
 add_library(Scanner::scanner ALIAS scanner)
