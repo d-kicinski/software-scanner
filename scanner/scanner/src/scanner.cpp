@@ -4,44 +4,43 @@
 #include <optional>
 
 namespace scanner {
-float median(cv::Mat Input, int nVals=256)
+float median(const cv::Mat&input, int nVals=256)
 {
     // refer to
     // https://stackoverflow.com/questions/30078756/super-fast-median-of-matrix-in-opencv-as-fast-as-matlab
-    // COMPUTE HISTOGRAM OF SINGLE CHANNEL MATRIX
+
+    // Compute histogram of single channel matrix
     float range[] = {0, (float)nVals};
     const float *histRange = {range};
     bool uniform = true;
     bool accumulate = false;
     cv::Mat hist;
-    cv::calcHist(&Input, 1, 0, cv::Mat(), hist, 1, &nVals, &histRange, uniform, accumulate);
+    cv::calcHist(&input, 1, 0, cv::Mat(), hist, 1, &nVals, &histRange, uniform, accumulate);
 
-    // COMPUTE CUMULATIVE DISTRIBUTION FUNCTION (CDF)
+    // Compute cumulative distribution function (cdf)
     cv::Mat cdf;
     hist.copyTo(cdf);
     for (int i = 1; i <= nVals - 1; i++) {
         cdf.at<float>(i) += cdf.at<float>(i - 1);
     }
-    cdf /= Input.total();
+    cdf /= input.total();
 
-    // COMPUTE MEDIAN
+    // Compute median
     float medianVal;
     for (int i = 0; i <= nVals - 1; i++) {
         if (cdf.at<float>(i) >= 0.5) {
-            medianVal = i;
+            medianVal = static_cast<float>(i);
             break;
         }
     }
-    // return medianVal/nVals;
     return medianVal;
 }
 
 void auto_canny(cv::Mat const &img, cv::Mat &out, float sigma=0.33)
 {
-    // compute the median
     float m = median(img);
 
-    // apply automatic Canny edge detectoin using computed median
+    // Apply automatic Canny edge detection using computed median
     int lower = std::max(0.0, (1.0 - sigma) * m);
     int upper = std::min(255.0, (1.0 + sigma) * m);
 
@@ -56,26 +55,25 @@ cv::Mat four_point_transform(cv::Mat const &img, std::vector<cv::Point> points)
     auto br = points[2];
     auto bl = points[3];
 
-    // compute the width of the new image -> max of euqlidian distance between
-    // horizontal aligment points
+    // Compute the width of the new image -> max of euclidean distance between
+    // horizontal alignment points
     auto width_bottom = std::sqrt(std::pow(br.x - bl.x, 2) + std::pow(br.y - bl.y, 2));
     auto width_top = std::sqrt(std::pow(tr.x - tl.x, 2) + std::pow(tr.y - tl.y, 2));
     auto width = std::max((int)width_top, (int)width_bottom);
 
-    // compute the height of the new image
+    // Compute the height of the new image
     auto height_right = std::sqrt(std::pow(tr.x - br.x, 2) + std::pow(tr.y - br.y, 2));
     auto height_left = std::sqrt(std::pow(tl.x - bl.x, 2) + std::pow(tl.y - bl.y, 2));
     auto height = std::max((int)height_right, (int)height_left);
 
-    // compute destination points we want to get after perspective correction
+    // Compute destination points we want to get after perspective correction
     auto dst =
         std::vector<cv::Point>{{0, 0}, {width - 1, 0}, {width - 1, height - 1}, {0, height - 1}};
 
     std::vector<cv::Point2f> pointsF(points.begin(), points.end());
     std::vector<cv::Point2f> dstF(dst.begin(), dst.end());
 
-    // compute the perspective transform and then applay it
-//    std::cout << points.size() << dst.size() << std::endl;
+    // Compute the perspective transform and then apply it
     cv::Mat m = cv::getPerspectiveTransform(pointsF, dstF);
 
     cv::Mat out;
@@ -135,16 +133,16 @@ std::vector<std::vector<cv::Point>> detect_white_objects(cv::Mat const &img, boo
 
 std::optional<std::vector<cv::Point>> find_rect(std::vector<std::vector<cv::Point>> const &contours)
 {
-    if (contours.size() == 0)
+    if (contours.empty())
         return std::nullopt;
 
     // Approximate contour with only four points
     std::vector<cv::Point> scan_contour;
     std::vector<cv::Point> approx;
 
-    for (auto c = contours.begin(); c != contours.end(); ++c) {
-        auto peri = cv::arcLength(*c, true);
-        cv::approxPolyDP(*c, approx, 0.05 * peri, true);
+    for (const auto & contour : contours) {
+        auto peri = cv::arcLength(contour, true);
+        cv::approxPolyDP(contour, approx, 0.05 * peri, true);
 
         if (approx.size() == 4) {
             scan_contour = approx;
@@ -154,7 +152,7 @@ std::optional<std::vector<cv::Point>> find_rect(std::vector<std::vector<cv::Poin
     order_points(scan_contour, scan_contour);
 
     // In case of not succeded at aproximating with 4 points
-    return (scan_contour.size() != 0) ? std::make_optional(scan_contour) : std::nullopt;
+    return (!scan_contour.empty()) ? std::make_optional(scan_contour) : std::nullopt;
 }
 
 /* Deprecated */
@@ -187,16 +185,16 @@ std::vector<cv::Point> get_main_contour(cv::Mat const &img)
     std::vector<cv::Point> approx;
     {
         auto &s = contours;
-        for (auto c = s.begin(); c != s.end(); ++c) {
-            auto peri = cv::arcLength(*c, true);
-            cv::approxPolyDP(*c, approx, 0.05 * peri, true);
+        for (auto & c : s) {
+            auto peri = cv::arcLength(c, true);
+            cv::approxPolyDP(c, approx, 0.05 * peri, true);
 
             scan_contour = approx;
             break;
         }
     }
 
-    if (scan_contour.size() == 0) {
+    if (scan_contour.empty()) {
         return {{0, 0}, {img.rows - 1, 0}, {img.rows - 1, img.cols - 1}, {0, img.cols - 1}};
     }
 
@@ -205,17 +203,12 @@ std::vector<cv::Point> get_main_contour(cv::Mat const &img)
 
 std::optional<cv::Mat> soft_scanner(cv::Mat const &org)
 {
-
     auto img(org);
 
-    float ratio = (float)(img.size().width) / 500.0;
+    float ratio = img.size().width / 500.0f;
     cv::resize(img, img, {500, (int)(img.size().height / ratio)});
 
-    auto img_cnts(img);
-    auto img_rects(img);
-    auto img_with_cntf(org);
-
-    auto white_cnts{detect_white_objects(img)};
+    auto white_cnts = detect_white_objects(img);
     if (auto rect = find_rect(white_cnts)) {
         std::for_each(rect->begin(), rect->end(), [&ratio](auto &p) { p *= ratio; });
 
@@ -229,8 +222,8 @@ std::optional<cv::Mat> soft_scanner(cv::Mat const &org)
 
 void software_scanner(unsigned long int input_ptr, unsigned long int output_ptr)
 {
-    cv::Mat *input_image = (cv::Mat *)input_ptr;
-    cv::Mat *output_image = (cv::Mat *)output_ptr;
+    auto *input_image = (cv::Mat *)input_ptr;
+    auto *output_image = (cv::Mat *)output_ptr;
 
     if (auto scan = scanner::soft_scanner(*input_image)) {
         *output_image = *scan;
@@ -241,14 +234,9 @@ void software_scanner(unsigned long int input_ptr, unsigned long int output_ptr)
 
 void draw_contour(unsigned long int input_ptr)
 {
-    // cv::Mat & image = *(cv::Mat*) image_ptr;
-    cv::Mat *input_image = (cv::Mat *)input_ptr;
+    auto *input_image = (cv::Mat *)input_ptr;
     if (input_image->empty())
         return;
-    // cv::Mat * output_image = (cv::Mat*) output_ptr;
-
-    // cv::resize(image, image, cv::Size(400, 400));
-    // auto contour {scanner::get_main_contour(image)};
 
     auto white_cnts{scanner::detect_white_objects(*input_image)};
     if (auto rect = scanner::find_rect(white_cnts)) {
