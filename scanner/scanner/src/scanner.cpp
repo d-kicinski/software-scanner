@@ -1,10 +1,10 @@
-#include <scanner/scanner.hpp>
 #include <scanner/img_utils.h>
+#include <scanner/scanner.hpp>
 
 #include <optional>
 
 namespace scanner {
-float median(const cv::Mat&input, int nVals=256)
+float median(const cv::Mat &input, int nVals = 256)
 {
     // refer to
     // https://stackoverflow.com/questions/30078756/super-fast-median-of-matrix-in-opencv-as-fast-as-matlab
@@ -36,7 +36,7 @@ float median(const cv::Mat&input, int nVals=256)
     return medianVal;
 }
 
-void auto_canny(cv::Mat const &img, cv::Mat &out, float sigma=0.33)
+void auto_canny(cv::Mat const &img, cv::Mat &out, float sigma = 0.33)
 {
     float m = median(img);
 
@@ -103,7 +103,7 @@ void order_points(std::vector<cv::Point> const &pts, std::vector<cv::Point> &dst
     dst[3] = *bl_it;
 }
 
-std::vector<std::vector<cv::Point>> detect_white_objects(cv::Mat const &img, bool sort=true)
+std::vector<std::vector<cv::Point>> detect_white_objects(cv::Mat const &img, bool sort = true)
 {
     cv::Mat img_hls;
 
@@ -140,7 +140,7 @@ std::optional<std::vector<cv::Point>> find_rect(std::vector<std::vector<cv::Poin
     std::vector<cv::Point> scan_contour;
     std::vector<cv::Point> approx;
 
-    for (const auto & contour : contours) {
+    for (const auto &contour : contours) {
         auto peri = cv::arcLength(contour, true);
         cv::approxPolyDP(contour, approx, 0.05 * peri, true);
 
@@ -185,7 +185,7 @@ std::vector<cv::Point> get_main_contour(cv::Mat const &img)
     std::vector<cv::Point> approx;
     {
         auto &s = contours;
-        for (auto & c : s) {
+        for (auto &c : s) {
             auto peri = cv::arcLength(c, true);
             cv::approxPolyDP(c, approx, 0.05 * peri, true);
 

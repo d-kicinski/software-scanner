@@ -20,21 +20,6 @@
 
 namespace scanner {
 
-//float median(cv::Mat Input, int nVals = 256);
-//
-//void auto_canny(cv::Mat const &img, cv::Mat &out, float sigma = 0.33);
-//
-//cv::Mat four_point_transform(cv::Mat const &img, std::vector<cv::Point> points);
-//
-//std::vector<cv::Point> get_main_contour(cv::Mat const &img);
-//
-//std::vector<std::vector<cv::Point>> detect_white_objects(cv::Mat const &img, bool sort = true);
-//
-//std::optional<std::vector<cv::Point>>
-//find_rect(std::vector<std::vector<cv::Point>> const &contours);
-//
-//std::optional<cv::Mat> soft_scanner(cv::Mat const &org);
-
 void draw_contour(unsigned long int input_ptr);
 
 void software_scanner(unsigned long int input_ptr, unsigned long int output_ptr);
