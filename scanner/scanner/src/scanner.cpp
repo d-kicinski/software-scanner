@@ -1,6 +1,8 @@
 #include <scanner/scanner.hpp>
 #include <scanner/img_utils.h>
 
+#include <optional>
+
 namespace scanner {
 float median(cv::Mat Input, int nVals=256)
 {

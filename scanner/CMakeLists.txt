@@ -1,11 +1,37 @@
 cmake_minimum_required(VERSION 3.7)
-project(scanner)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+option(ANDROID "whether to build for android (arm64-v8a) platform" OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+if (ANDROID)
+    # Use OpenCV build specifically for Android
+    set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/deps/opencv/sdk/native/jni")
+
+    if (NOT DEFINED ENV{ANDROID_NDK})
+        message("ANDROID_NDK is not set!")
+        return()
+    endif()
+
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{ANDROID_NDK}/build/cmake/android.toolchain.cmake")
+    set(ANDROID_NDK_ABI_NAME "arm64-v8a")
+    set(ANDROID_ABI "arm64-v8a")
+    set(ANDROID_PLATFORM 30)
+
+    # Fixes FindJNI errors, for details see the following:
+    # https://stackoverflow.com/questions/51047978/cmake-could-not-find-jni/56132225
+    set(JAVA_AWT_LIBRARY NotNeeded)
+    set(JAVA_JVM_LIBRARY NotNeeded)
+    set(JAVA_INCLUDE_PATH2 NotNeeded)
+    set(JAVA_AWT_INCLUDE_PATH NotNeeded)
+endif ()
+
+project(scanner)
 
 # Force default build type to Release
 if(NOT CMAKE_BUILD_TYPE)
