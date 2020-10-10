@@ -251,4 +251,6 @@ void draw_contour(unsigned long int input_ptr)
         }
     }
 }
+
+auto hello() -> std::string { return "Hello from scanner library!"; }
 } // namespace scanner
