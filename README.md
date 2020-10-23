@@ -4,15 +4,21 @@
 <img src="https://github.com/dawidkski/software-scanner/blob/master/res/cropped_optim.gif" width="350" height="600" />
 </p>
 
-### About:
-Android aplication make taking photos of documents/papers/recipes 
-easier. Point camera at your object of interest, click red button and wait for magic to happend. Hint (green contour) tells you in real time how implemented algorithm see your document.
+Toy-project to learn how to use native code in Android applications. This sample provides scanner-like functionality. Would you like to take a photo of a document, paper, or recipe? Point your camera at it, click the shutter button, and wait for the result. Green contour will tell you how the implemented algorithm sees your document in real-time.
+
 <p align="center">
 <img src="https://github.com/dawidkski/software-scanner/blob/master/res/img2.png" width="640" height="360"/>
 </p>
-As shown there's no need to worry about holding your smartphone straight, application automaticaly fixes that for you.
 
-### Dependences
-* OpenCV
-* OpenCV for Android
-* Djinni (bindings to native code)
+In addition, there's no need to worry about holding your smartphone straight as application will performs perspective transformation to fix that for you. :^)
+
+#### Install boundled apk
+To install apk boundled in the latest release open this [link](https://github.com/dawidkski/software-scanner/releases/download/v0.1.0/scanner-app.apk) in your browser on your smartphone. Download the apk and install it. This apk is signed locally so probably you'll be warned about possible danger.
+
+#### Build apk by yourself
+To build and install apk on your device simply run the following.
+```bash
+./gradlew build installDebug
+```
+
+If you're interested in how detection and transformation is performed inspect this [repository](https://github.com/dawidkski/software-scanner-native)
