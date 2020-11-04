@@ -21,4 +21,9 @@ To build and install apk on your device simply run the following.
 ./gradlew build installDebug
 ```
 
+#### Using Android Studio
+When you hit `Build` in Android Stdio it ignores my task for downloading external dependencies.
+To build it you'll need to run the command `./gradlew build` first to fetch `scaner-jni` and `opencv` libs.
+Then you can use Android Studio as you please :^)
+
 If you're interested in how detection and transformation is performed inspect this [repository](https://github.com/dawidkski/software-scanner-native)
