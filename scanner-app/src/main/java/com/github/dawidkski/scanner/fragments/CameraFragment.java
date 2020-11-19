@@ -16,7 +16,7 @@ import androidx.navigation.Navigation;
 
 import com.github.dawidkski.scanner.R;
 import com.github.dawidkski.scanner.camera.CameraBridgeViewBase;
-import com.github.dawidkski.scanner.camera.CvCameraViewFrame;
+import com.github.dawidkski.scanner.camera.frame.CameraFrame;
 import com.github.dawidkski.scanner.camera.CvCameraViewListener;
 import com.github.dawidkski.scanner.camera.JavaCamera2View;
 import com.github.dawidkski.scanner.jni.Scanner;
@@ -119,8 +119,8 @@ public class CameraFragment extends Fragment implements CvCameraViewListener {
     }
 
     @Override
-    public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        mCurrentFrame = inputFrame.rgba();
+    public Mat onCameraFrame(CameraFrame inputFrame) {
+        mCurrentFrame = inputFrame.get();
         if (mHintSwitch.isChecked() && mIsFrameProcessingEnabled) {
             Scanner.drawContour(mCurrentFrame.getNativeObjAddr());
         }

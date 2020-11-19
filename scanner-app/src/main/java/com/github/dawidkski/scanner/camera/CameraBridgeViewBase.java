@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -15,6 +14,8 @@ import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.github.dawidkski.scanner.camera.frame.CameraFrame;
 
 import org.opencv.android.FpsMeter;
 import org.opencv.android.Utils;
@@ -91,10 +92,12 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         }
     }
 
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
         /* Do nothing. Wait until surfaceChanged delivered */
     }
 
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         synchronized(mSyncObject) {
             mSurfaceExist = false;
@@ -368,13 +371,13 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * then displayed on the screen.
      * @param frame - the current frame to be delivered
      */
-    protected void deliverAndDrawFrame(CvCameraViewFrame frame) { //replaces existing deliverAndDrawFrame
+    protected void deliverAndDrawFrame(CameraFrame frame) { //replaces existing deliverAndDrawFrame
         Mat modified;
 
         if (mListener != null) {
             modified = mListener.onCameraFrame(frame);
         } else {
-            modified = frame.rgba();
+            modified = frame.get();
         }
 
         boolean bmpValid = true;
@@ -412,6 +415,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 getHolder().unlockCanvasAndPost(canvas);
             }
         }
+        modified.release();
     }
 
 }
