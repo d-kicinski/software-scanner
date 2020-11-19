@@ -1,5 +1,7 @@
 package com.github.dawidkski.scanner.camera;
 
+import com.github.dawidkski.scanner.camera.frame.CameraFrame;
+
 import org.opencv.core.Mat;
 
 public interface CvCameraViewListener {
@@ -22,7 +24,7 @@ public interface CvCameraViewListener {
      * The returned values - is a modified frame which needs to be displayed on the screen.
      * TODO: pass the parameters specifying the format of the frame (BPP, YUV or RGB and etc)
      */
-    Mat onCameraFrame(CvCameraViewFrame inputFrame);
+    Mat onCameraFrame(CameraFrame inputFrame);
 
     void onPictureTaken();
 }

@@ -25,9 +25,13 @@ import android.view.Surface;
 import android.view.ViewGroup.LayoutParams;
 
 
+import com.github.dawidkski.scanner.camera.frame.CameraFrame;
+import com.github.dawidkski.scanner.camera.frame.RGBACameraFrame;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -213,15 +217,10 @@ public class JavaCamera2View extends CameraBridgeViewBase {
                     if (image == null)
                         return;
 
-                    // sanity checks - 3 planes
-                    Image.Plane[] planes = image.getPlanes();
-                    assert (planes.length == 3);
-                    assert (image.getFormat() == mPreviewFormat);
+                    try(CameraFrame frame = new RGBACameraFrame(image)) {
+                        deliverAndDrawFrame(frame);
+                    }
 
-                    JavaCamera2Frame tempFrame = new JavaCamera2Frame(image);
-                    deliverAndDrawFrame(tempFrame);
-                    tempFrame.release();
-                    image.close();
                 }
             }, mBackgroundHandler);
             Surface surface = mImageReader.getSurface();
