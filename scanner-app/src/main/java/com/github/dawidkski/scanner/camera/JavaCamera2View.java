@@ -15,6 +15,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
@@ -24,6 +25,8 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.ViewGroup.LayoutParams;
 
+
+import androidx.annotation.RequiresApi;
 
 import com.github.dawidkski.scanner.camera.frame.CameraFrame;
 import com.github.dawidkski.scanner.camera.frame.RGBACameraFrame;
@@ -366,6 +369,7 @@ public class JavaCamera2View extends CameraBridgeViewBase {
     private CameraCaptureSession.CaptureCallback mCaptureCallback
             = new CameraCaptureSession.CaptureCallback() {
 
+        @RequiresApi(api = Build.VERSION_CODES.R)
         private void process(CaptureResult result) {
             switch (mState) {
                 case STATE_PREVIEW: {
@@ -412,6 +416,7 @@ public class JavaCamera2View extends CameraBridgeViewBase {
             }
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.R)
         @Override
         public void onCaptureProgressed(@NotNull CameraCaptureSession session,
                                         @NotNull CaptureRequest request,
@@ -419,6 +424,7 @@ public class JavaCamera2View extends CameraBridgeViewBase {
             process(partialResult);
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.R)
         @Override
         public void onCaptureCompleted(@NotNull CameraCaptureSession session,
                                        @NotNull CaptureRequest request,
@@ -433,6 +439,7 @@ public class JavaCamera2View extends CameraBridgeViewBase {
      * Capture a still picture. This method should be called when we get a response in
      * {@link #mCaptureCallback} from both {@link #lockFocus()}.
      */
+    @RequiresApi(api = Build.VERSION_CODES.R)
     private void captureStillPicture() {
         try {
             if (null == mCameraDevice) {
