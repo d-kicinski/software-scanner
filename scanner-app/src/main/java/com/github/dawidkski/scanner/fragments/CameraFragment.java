@@ -1,6 +1,8 @@
 package com.github.dawidkski.scanner.fragments;
 
 import android.content.Context;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,20 +11,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.github.dawidkski.scanner.R;
-import com.github.dawidkski.scanner.camera.CameraBridgeViewBase;
+import com.github.dawidkski.scanner.camera.Camera;
+import com.github.dawidkski.scanner.camera.CameraView;
+import com.github.dawidkski.scanner.camera.CameraViewController;
+import com.github.dawidkski.scanner.camera.CameraViewListener;
 import com.github.dawidkski.scanner.camera.frame.CameraFrame;
-import com.github.dawidkski.scanner.camera.CvCameraViewListener;
-import com.github.dawidkski.scanner.camera.JavaCamera2View;
 import com.github.dawidkski.scanner.jni.Scanner;
 
 import org.jetbrains.annotations.NotNull;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
 import java.io.File;
@@ -31,16 +34,19 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-public class CameraFragment extends Fragment implements CvCameraViewListener {
+public class CameraFragment extends Fragment implements CameraViewListener {
 
     private static final int FRAME_PROCESS_DELAY = 500;
 
-    private boolean mIsFrameProcessingEnabled = false;
-    private Mat mCurrentFrame;
-    private JavaCamera2View mOpenCvCameraView;
-    private File mFile;
-    private SwitchCompat mHintSwitch;
-    private NavController mNavController;
+    private Camera camera;
+    private CameraView cameraView;
+    private CameraViewController cameraViewController;
+    private CameraManager cameraManager;
+
+    private File file;
+    private SwitchCompat switchCompat;
+    private NavController navController;
+    private boolean isFrameProcessingEnabled = false;
 
     public CameraFragment() {
         Log.d(this.getClass().getSimpleName(), "Instantiated new " + this.getClass());
@@ -55,81 +61,81 @@ public class CameraFragment extends Fragment implements CvCameraViewListener {
     @Override
     public void onViewCreated(@NotNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mOpenCvCameraView = view.findViewById(R.id.java_camera2_view);
+        cameraView = view.findViewById(R.id.camera_view);
+        camera = new Camera();
+        cameraViewController = new CameraViewController(cameraView, camera);
+        cameraManager = (CameraManager) requireContext().getSystemService(Context.CAMERA_SERVICE);
+
         view.findViewById(R.id.capture_button).setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void onClick(View v) {
                 v.setEnabled(true);
                 Log.d(this.getClass().getSimpleName(), "Requesting image capture from UI.");
-                mFile = createFile(requireContext());
-                mOpenCvCameraView.takePicture(mFile);
+                file = createFile(requireContext());
+                int rotation = requireContext().getDisplay().getRotation();
+                camera.takePicture(file, rotation);
             }
         });
-        mHintSwitch = view.findViewById(R.id.hint_switch);
+        switchCompat = view.findViewById(R.id.hint_switch);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mNavController = Navigation.findNavController(requireActivity(), R.id.fragment_container);
-        mOpenCvCameraView.setCameraPermissionGranted();
-        mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
+        navController = Navigation.findNavController(requireActivity(), R.id.fragment_container);
+        cameraViewController.setCameraPermissionGranted();
+        cameraViewController.setListener(this);
 
         // Let's wait some time before starting analyzing each frame with native code
         final Handler handler = new Handler(Objects.requireNonNull(Looper.myLooper()));
         handler.postDelayed(new Runnable() {
             public void run() {
-                mIsFrameProcessingEnabled = true;
+                isFrameProcessingEnabled = true;
             }
         }, FRAME_PROCESS_DELAY);
     }
 
     @Override
     public void onResume() {
+        Log.d(this.getClass().getSimpleName(), "onResume");
         super.onResume();
         System.loadLibrary("opencv_java4");
         System.loadLibrary("jniscanner");
-        mOpenCvCameraView.enableView();
+
+        camera.open(cameraManager);
+        cameraViewController.enableView();
     }
 
     @Override
     public void onPause() {
+        Log.d(this.getClass().getSimpleName(), "onPause");
         super.onPause();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
+        if (cameraView != null)
+            cameraViewController.disableView();
     }
 
     @Override
     public void onDestroy() {
+        Log.d(this.getClass().getSimpleName(), "onDestroy");
         super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    @Override
-    public void onCameraViewStarted(int width, int height) {
-        mCurrentFrame = new Mat(height, width, CvType.CV_8UC4);
-    }
-
-    @Override
-    public void onCameraViewStopped() {
-        mCurrentFrame.release();
+        if (cameraView != null)
+            cameraViewController.disableView();
     }
 
     @Override
     public Mat onCameraFrame(CameraFrame inputFrame) {
-        mCurrentFrame = inputFrame.get();
-        if (mHintSwitch.isChecked() && mIsFrameProcessingEnabled) {
-            Scanner.drawContour(mCurrentFrame.getNativeObjAddr());
+        Mat frame = inputFrame.get();
+        if (switchCompat.isChecked() && isFrameProcessingEnabled) {
+            Scanner.drawContour(frame.getNativeObjAddr());
         }
-        return mCurrentFrame;
+        return frame;
     }
 
     @Override
     public void onPictureTaken() {
-        mNavController.navigate(CameraFragmentDirections.actionCameraToJpegViewer(mFile.getAbsolutePath()));
+        navController.navigate(CameraFragmentDirections.actionCameraToJpegViewer(file.getAbsolutePath()));
     }
 
     private File createFile(Context context) {

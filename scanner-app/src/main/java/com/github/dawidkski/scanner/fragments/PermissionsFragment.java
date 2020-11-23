@@ -17,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class PermissionsFragment extends Fragment {
 
-    private static int PERMISSIONS_REQUEST_CODE = 200;
-    private static String[] PERMISSIONS_REQUIRED = new String[]{Manifest.permission.CAMERA};
+    private static final int PERMISSIONS_REQUEST_CODE = 200;
+    private static final String[] PERMISSIONS_REQUIRED = new String[]{Manifest.permission.CAMERA};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
