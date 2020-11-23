@@ -3,25 +3,27 @@
     android:layout_height="match_parent"
     style="@style/AppFullScreenTheme">
 
-    <com.github.dawidkski.scanner.camera.JavaCamera2View
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/java_camera2_view" />
+    <com.github.dawidkski.scanner.camera.CameraView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/camera_view" />
 
     <ImageButton
         android:id="@+id/capture_button"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:layout_gravity="bottom|center"
         android:scaleType="fitCenter"
         android:background="@drawable/ic_shutter"
         android:contentDescription="@string/capture" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/hint_switch"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        android:layout_gravity="bottom|start"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/hint_switch"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:layout_gravity="bottom|start"/>
+
 </FrameLayout>
+

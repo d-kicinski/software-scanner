@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
@@ -62,6 +64,7 @@ public class ScannedImageFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mImageView = view.findViewById(R.id.scanned_image_view);
         view.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.Q)
             @Override
             public void onClick(View v) {
                 onSaveButton();
@@ -104,6 +107,7 @@ public class ScannedImageFragment extends Fragment {
                         .setIsScanAccepted(false));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void onSaveButton() {
         releaseAll();
         saveImage(mScannedBitmap);
@@ -112,6 +116,7 @@ public class ScannedImageFragment extends Fragment {
                         .setIsScanAccepted(true));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void saveImage(Bitmap bitmap) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "title");

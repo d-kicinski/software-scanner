@@ -8,33 +8,33 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class ImageSaver implements Runnable {
+class ImageSaver implements Runnable {
 
-    private final Image mImage;
-    private final File mFile;
-    private final CvCameraViewListener mListener;
+    private final Image image;
+    private final File file;
+    private final Camera.StillImageListener listener;
 
-    ImageSaver(Image image, File file, CvCameraViewListener listener) {
-        mImage = image;
-        mFile = file;
-        mListener =listener;
+    ImageSaver(Image image, File file, Camera.StillImageListener listener) {
+        this.image = image;
+        this.file = file;
+        this.listener = listener;
     }
 
     @Override
     public void run() {
-        Log.d(ImageSaver.class.getSimpleName(), "Save image to " + mFile.toString());
-        ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+        Log.d(ImageSaver.class.getSimpleName(), "Save image to " + file.toString());
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
         FileOutputStream output = null;
         try {
-            output = new FileOutputStream(mFile);
+            output = new FileOutputStream(file);
             output.write(bytes);
-            mListener.onPictureTaken();
+            listener.onStillImage();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            mImage.close();
+            image.close();
             if (null != output) {
                 try {
                     output.close();
