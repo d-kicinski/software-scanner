@@ -28,9 +28,8 @@ class ImageSaver implements Runnable {
         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
-        FileOutputStream output = null;
-        try {
-            output = new FileOutputStream(file);
+
+        try (FileOutputStream output = new FileOutputStream(file)) {
             output.write(bytes);
 
             // Call callback on main thread
@@ -46,13 +45,6 @@ class ImageSaver implements Runnable {
             e.printStackTrace();
         } finally {
             image.close();
-            if (null != output) {
-                try {
-                    output.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 

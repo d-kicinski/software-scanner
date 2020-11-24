@@ -52,7 +52,7 @@ public class CameraFragment extends Fragment implements CameraViewListener {
     private boolean isFrameProcessingEnabled = false;
 
     public CameraFragment() {
-        Log.d(this.getClass().getSimpleName(), "Instantiated new " + this.getClass());
+        // Required empty public constructor
     }
 
     @Override

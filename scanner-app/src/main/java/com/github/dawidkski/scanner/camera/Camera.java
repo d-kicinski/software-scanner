@@ -30,11 +30,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
+
 
 public class Camera {
 
-    private final static int PREVIEW_FORMAT = ImageFormat.YUV_420_888;
-    private final static int MAX_UNSPECIFIED = -1;
+    private static final int PREVIEW_FORMAT = ImageFormat.YUV_420_888;
+    private static final int MAX_UNSPECIFIED = -1;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -91,7 +93,7 @@ public class Camera {
                 this.characteristics = manager.getCameraCharacteristics(cameraId);
 
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-                if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                if (facing != null && facing == LENS_FACING_FRONT) {
                     continue;
                 }
 
@@ -244,17 +246,10 @@ public class Camera {
             int height = size.getHeight();
             Log.d(this.getClass().getSimpleName(), "trying size: " + width + "x" + height);
 
-            if (width <= maxAllowedWidth && height <= maxAllowedHeight) {
-                if (width >= calcWidth && height >= calcHeight) {
-                    calcWidth = width;
-                    calcHeight = height;
-                }
+            if (width <= maxAllowedWidth && height <= maxAllowedHeight && width >= calcWidth && height >= calcHeight) {
+                calcWidth = width;
+                calcHeight = height;
             }
-        }
-        if ((calcWidth == 0 || calcHeight == 0) && supportedSizes.size() > 0) {
-            Size size = supportedSizes.get(0);
-            calcWidth = size.getWidth();
-            calcHeight = size.getHeight();
         }
 
         return new Size(calcWidth, calcHeight);

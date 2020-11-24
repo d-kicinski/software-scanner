@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 class CameraDeviceStateCallback extends CameraDevice.StateCallback {
 
-    Camera camera;
+    private final Camera camera;
 
     public CameraDeviceStateCallback(Camera camera) {
         this.camera = camera;

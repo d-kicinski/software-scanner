@@ -20,6 +20,10 @@ public class PermissionsFragment extends Fragment {
     private static final int PERMISSIONS_REQUEST_CODE = 200;
     private static final String[] PERMISSIONS_REQUIRED = new String[]{Manifest.permission.CAMERA};
 
+    public PermissionsFragment() {
+        // Required empty public constructor
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +36,7 @@ public class PermissionsFragment extends Fragment {
         }
     }
 
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_CODE) {

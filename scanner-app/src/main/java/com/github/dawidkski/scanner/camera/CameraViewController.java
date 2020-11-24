@@ -72,22 +72,14 @@ public class CameraViewController
     }
 
     private void processEnterState(int state) {
-        switch (state) {
-            case STARTED:
-                onEnterStartedState();
-                break;
-            case STOPPED:
-                break;
+        if (state == STARTED) {
+            onEnterStartedState();
         }
     }
 
     private void processExitState(int state) {
-        switch (state) {
-            case STARTED:
-                onExitStartedState();
-                break;
-            case STOPPED:
-                break;
+        if (state == STARTED) {
+            onExitStartedState();
         }
     }
 
