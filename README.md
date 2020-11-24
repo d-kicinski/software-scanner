@@ -13,7 +13,7 @@ Toy-project to learn how to use native code in Android applications. This sample
 In addition, there's no need to worry about holding your smartphone straight as application will performs perspective transformation to fix that for you. :^)
 
 #### Install boundled apk
-To install apk boundled in the latest release open this [link](https://github.com/dawidkski/software-scanner/releases/download/v0.1.0/scanner-app.apk) in your browser on your smartphone. Download the apk and install it. This apk is signed locally so probably you'll be warned about possible danger.
+To install apk boundled in the latest release open this [link](https://github.com/d-kicinski/software-scanner/releases/download/v0.2.0/scanner-app-arm64-v8a-release.apk) in your browser on your smartphone. Download the apk and install it. This apk is signed locally so probably you'll be warned about possible danger.
 
 #### Build apk by yourself
 To build and install apk on your device simply run the following.
