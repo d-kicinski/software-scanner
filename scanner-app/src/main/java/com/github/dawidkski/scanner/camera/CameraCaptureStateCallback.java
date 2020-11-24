@@ -1,7 +1,6 @@
 package com.github.dawidkski.scanner.camera;
 
 import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CaptureRequest;
 import android.util.Log;
 
 
@@ -23,15 +22,8 @@ class CameraCaptureStateCallback extends CameraCaptureSession.StateCallback {
         }
         camera.cameraCaptureSession = cameraCaptureSession;
         try {
-            camera.previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            camera.previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-
             camera.previewRequest = camera.previewRequestBuilder.build();
-            camera.cameraCaptureSession.setRepeatingRequest(
-                    camera.previewRequest,
-                    camera.cameraCaptureCaptureCallback,
+            camera.cameraCaptureSession.setRepeatingRequest(camera.previewRequest, null,
                     camera.backgroundHandler);
         } catch (Exception e) {
             Log.e(this.getClass().getSimpleName(), "onConfigured failed", e);
@@ -42,4 +34,5 @@ class CameraCaptureStateCallback extends CameraCaptureSession.StateCallback {
     public void onConfigureFailed(@NotNull CameraCaptureSession cameraCaptureSession) {
         Log.e(this.getClass().getSimpleName(), "onConfigureFailed");
     }
+
 }
