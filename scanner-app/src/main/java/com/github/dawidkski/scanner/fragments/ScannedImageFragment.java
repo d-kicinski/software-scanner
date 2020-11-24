@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.github.dawidkski.scanner.R;
-
 import com.github.dawidkski.scanner.jni.Scanner;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,11 +34,11 @@ public class ScannedImageFragment extends Fragment {
 
     private static final String ARG_IMAGE_PATH = "imagePath";
 
-    private String mImagePath;
-    private Mat mRawImage;
-    private Mat mScannedImage;
-    private Bitmap mScannedBitmap;
-    private ImageView mImageView;
+    private String imagePath;
+    private Mat rawImage;
+    private Mat scannedImage;
+    private Bitmap scannedBitmap;
+    private ImageView imageView;
 
     public ScannedImageFragment() {
         // Required empty public constructor
@@ -49,7 +48,7 @@ public class ScannedImageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mImagePath = getArguments().getString(ARG_IMAGE_PATH);
+            imagePath = getArguments().getString(ARG_IMAGE_PATH);
         }
     }
 
@@ -62,7 +61,7 @@ public class ScannedImageFragment extends Fragment {
     @Override
     public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mImageView = view.findViewById(R.id.scanned_image_view);
+        imageView = view.findViewById(R.id.scanned_image_view);
         view.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.Q)
             @Override
@@ -77,9 +76,9 @@ public class ScannedImageFragment extends Fragment {
             }
         });
 
-        mRawImage = loadImage(mImagePath);
-        mScannedImage = scanImage(mRawImage);
-        displayImage(mScannedImage);
+        rawImage = loadImage(imagePath);
+        scannedImage = scanImage(rawImage);
+        displayImage(scannedImage);
     }
 
     private Mat scanImage(Mat image) {
@@ -95,9 +94,9 @@ public class ScannedImageFragment extends Fragment {
     }
 
     private void displayImage(Mat image) {
-        mScannedBitmap = Bitmap.createBitmap(image.cols(), image.rows(), Bitmap.Config.RGB_565);
-        Utils.matToBitmap(image, mScannedBitmap);
-        mImageView.setImageBitmap(mScannedBitmap);
+        scannedBitmap = Bitmap.createBitmap(image.cols(), image.rows(), Bitmap.Config.RGB_565);
+        Utils.matToBitmap(image, scannedBitmap);
+        imageView.setImageBitmap(scannedBitmap);
     }
 
     private void onCloseButton() {
@@ -110,7 +109,7 @@ public class ScannedImageFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void onSaveButton() {
         releaseAll();
-        saveImage(mScannedBitmap);
+        saveImage(scannedBitmap);
         Navigation.findNavController(requireActivity(), R.id.fragment_container).navigate(
                 ScannedImageFragmentDirections.actionScannedImageViewToCameraFragment()
                         .setIsScanAccepted(true));
@@ -140,8 +139,8 @@ public class ScannedImageFragment extends Fragment {
     }
 
     private void releaseAll() {
-        mRawImage.release();
-        mScannedImage.release();
+        rawImage.release();
+        scannedImage.release();
     }
 
 }
