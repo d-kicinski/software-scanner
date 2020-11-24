@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SwitchCompat;
@@ -43,6 +44,8 @@ public class CameraFragment extends Fragment implements CameraViewListener {
     private CameraViewController cameraViewController;
     private CameraManager cameraManager;
 
+    private ProgressBar progressBar;
+
     private File file;
     private SwitchCompat switchCompat;
     private NavController navController;
@@ -62,6 +65,7 @@ public class CameraFragment extends Fragment implements CameraViewListener {
     public void onViewCreated(@NotNull final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         cameraView = view.findViewById(R.id.camera_view);
+        progressBar = view.findViewById(R.id.progress_bar);
         camera = new Camera();
         cameraViewController = new CameraViewController(cameraView, camera);
         cameraManager = (CameraManager) requireContext().getSystemService(Context.CAMERA_SERVICE);
@@ -75,6 +79,7 @@ public class CameraFragment extends Fragment implements CameraViewListener {
                 file = createFile(requireContext());
                 int rotation = requireContext().getDisplay().getRotation();
                 camera.takePicture(file, rotation);
+                progressBar.setVisibility(View.VISIBLE);
             }
         });
         switchCompat = view.findViewById(R.id.hint_switch);
@@ -136,6 +141,7 @@ public class CameraFragment extends Fragment implements CameraViewListener {
     @Override
     public void onPictureTaken() {
         navController.navigate(CameraFragmentDirections.actionCameraToJpegViewer(file.getAbsolutePath()));
+        progressBar.setVisibility(View.GONE);
     }
 
     private File createFile(Context context) {
