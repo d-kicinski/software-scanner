@@ -1,6 +1,8 @@
 package com.github.dawidkski.scanner.camera;
 
 import android.media.Image;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import java.io.File;
@@ -30,7 +32,16 @@ class ImageSaver implements Runnable {
         try {
             output = new FileOutputStream(file);
             output.write(bytes);
-            listener.onStillImage();
+
+            // Call callback on main thread
+            Handler mainHandler = new Handler(Looper.getMainLooper());
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onStillImage();
+                }
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
