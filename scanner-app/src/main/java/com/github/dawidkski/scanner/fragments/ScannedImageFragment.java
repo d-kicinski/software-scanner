@@ -30,6 +30,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
 
+import static android.provider.MediaStore.Images.Media.TITLE;
+import static android.provider.MediaStore.Images.Media.DISPLAY_NAME;
+import static android.provider.MediaStore.Images.Media.DESCRIPTION;
+import static android.provider.MediaStore.Images.Media.MIME_TYPE;
+import static android.provider.MediaStore.Images.Media.IS_PENDING;
+import static android.provider.MediaStore.Images.Media.DATE_ADDED;
+import static android.provider.MediaStore.Images.Media.DATE_TAKEN;
+
 public class ScannedImageFragment extends Fragment {
 
     private static final String ARG_IMAGE_PATH = "imagePath";
@@ -82,9 +90,9 @@ public class ScannedImageFragment extends Fragment {
     }
 
     private Mat scanImage(Mat image) {
-        Mat scannedImage = new Mat();
-        Scanner.softwareScanner(image.getNativeObjAddr(), scannedImage.getNativeObjAddr());
-        return scannedImage;
+        Mat scan = new Mat();
+        Scanner.softwareScanner(image.getNativeObjAddr(), scan.getNativeObjAddr());
+        return scan;
     }
 
     private Mat loadImage(String imagePath) {
@@ -118,14 +126,14 @@ public class ScannedImageFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void saveImage(Bitmap bitmap) {
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "title");
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, "display name");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "description");
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.Images.Media.IS_PENDING, 1);
         values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
-        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        values.put(TITLE, "title");
+        values.put(DISPLAY_NAME, "display name");
+        values.put(DESCRIPTION, "description");
+        values.put(MIME_TYPE, "image/jpeg");
+        values.put(IS_PENDING, 1);
+        values.put(DATE_ADDED, System.currentTimeMillis());
+        values.put(DATE_TAKEN, System.currentTimeMillis());
 
         ContentResolver resolver = requireContext().getContentResolver();
 

@@ -14,4 +14,4 @@ public interface CameraFrame extends AutoCloseable {
     @Override
     void close();
 
-};
+}
