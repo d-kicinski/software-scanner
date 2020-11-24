@@ -6,7 +6,6 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
@@ -51,9 +50,6 @@ public class Camera {
     CaptureRequest.Builder previewRequestBuilder;
     CaptureRequest previewRequest;
     Handler backgroundHandler;
-    CameraState state = CameraState.STATE_PREVIEW;
-    CameraCaptureCaptureCallback cameraCaptureCaptureCallback;
-
 
     private final CameraDeviceStateCallback cameraDeviceStateCallback;
     private final Size maxPreviewSize;
@@ -76,27 +72,15 @@ public class Camera {
     private int screenOrientation;
     private int sensorOrientation;
 
-
-    public void setPreviewFrameListener(PreviewFrameListener previewFrameListener) {
-        this.previewFrameListener = previewFrameListener;
-    }
-
-    public void setStillImageListener(StillImageListener stillImageListener) {
-        this.stillImageListener = stillImageListener;
-    }
-
-
     public Camera() {
-        this.cameraCaptureCaptureCallback = new CameraCaptureCaptureCallback(this);
         this.cameraDeviceStateCallback = new CameraDeviceStateCallback(this);
         this.maxPreviewSize = new Size(-1, -1);
     }
 
-
     public void takePicture(File file, int screenOrientation) {
         this.file = file;
         this.screenOrientation = screenOrientation;
-        lockFocus();
+        captureStillPicture();
     }
 
     public void open(CameraManager manager) {
@@ -140,7 +124,6 @@ public class Camera {
         }
     }
 
-
     public void start(int surfaceWidth, int surfaceHeight) {
         Log.d(this.getClass().getSimpleName(), "start");
         createCameraPreviewSession(surfaceWidth, surfaceHeight);
@@ -168,6 +151,14 @@ public class Camera {
         Log.d(this.getClass().getSimpleName(), "camera closed");
     }
 
+    public void setPreviewFrameListener(PreviewFrameListener previewFrameListener) {
+        this.previewFrameListener = previewFrameListener;
+    }
+
+    public void setStillImageListener(StillImageListener stillImageListener) {
+        this.stillImageListener = stillImageListener;
+    }
+
     private void startBackgroundThread() {
         stopBackgroundThread();
         backgroundThread = new HandlerThread("Camera");
@@ -187,7 +178,6 @@ public class Camera {
             Log.e(this.getClass().getSimpleName(), "stopBackgroundThread", e);
         }
     }
-
 
     private void createCameraPreviewSession(int surfaceWidth, int surfaceHeight) {
         StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
@@ -270,67 +260,15 @@ public class Camera {
         return new Size(calcWidth, calcHeight);
     }
 
-
-    void lockFocus() {
-        Log.d(this.getClass().getSimpleName(), "lockFocus");
-        try {
-            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CameraMetadata.CONTROL_AF_TRIGGER_START);
-            state = CameraState.STATE_WAITING_LOCK;
-            cameraCaptureSession.capture(previewRequestBuilder.build(), cameraCaptureCaptureCallback,
-                    backgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void runPrecaptureSequence() {
-        Log.d(this.getClass().getSimpleName(), "runPrecaptureSequence");
-        try {
-            // This is how to tell the camera to trigger.
-            previewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-                    CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
-            state = CameraState.STATE_WAITING_PRECAPTURE;
-            cameraCaptureSession.capture(previewRequestBuilder.build(), cameraCaptureCaptureCallback,
-                    backgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void unlockFocus() {
-        Log.d(this.getClass().getSimpleName(), "unlockFocus");
-        try {
-            // Reset the auto-focus trigger
-            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-            cameraCaptureSession.capture(previewRequestBuilder.build(), cameraCaptureCaptureCallback,
-                    backgroundHandler);
-            // After this, the camera will go back to the normal state of preview.
-            state = CameraState.STATE_PREVIEW;
-            cameraCaptureSession.setRepeatingRequest(previewRequest, cameraCaptureCaptureCallback,
-                    backgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
     void captureStillPicture() {
         Log.d(this.getClass().getSimpleName(), "captureStillPicture");
         try {
             if (cameraDevice == null) {
                 return;
             }
-            // This is the CaptureRequest.Builder that we use to take a picture.
             final CaptureRequest.Builder captureBuilder =
                     cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(stillImageReader.getSurface());
-
-            // Use the same AE and AF modes as the preview.
-            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
-                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-
-            // Orientation
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(screenOrientation));
 
             CameraCaptureSession.CaptureCallback captureCallback
@@ -340,8 +278,12 @@ public class Camera {
                 public void onCaptureCompleted(@NotNull CameraCaptureSession session,
                                                @NotNull CaptureRequest request,
                                                @NotNull TotalCaptureResult result) {
-                    Log.d(this.getClass().getSimpleName(), file.toString());
-                    unlockFocus();
+                    try {
+                        cameraCaptureSession.setRepeatingRequest(previewRequest, null,
+                                backgroundHandler);
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
             };
 
