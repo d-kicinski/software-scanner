@@ -17,13 +17,23 @@
         android:background="@drawable/ic_shutter"
         android:contentDescription="@string/capture" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/hint_switch"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:layout_gravity="bottom|start"/>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/hint_switch"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:layout_gravity="bottom|start"/>
+
+    <ProgressBar
+        android:layout_gravity="center_horizontal|center"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:visibility="gone"
+        />
 
 </FrameLayout>
 
